@@ -1,0 +1,47 @@
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class FileHandler {
+
+    /**
+     * Saves the given configuration data to the specified file path.
+     * 
+     * @param configData The configuration data to write to the file.
+     * @param filePath   The path of the file where data will be saved.
+     */
+    public static void saveConfigurationToFile(String configData, String filePath) {
+        try {
+            // Attempt to open the file in write mode and write config data
+            FileWriter writer = new FileWriter(filePath);
+            writer.write(configData);
+            writer.close();
+            System.out.println("Configuration saved successfully.");
+        } catch (IOException e) {
+            // Handle any file writing errors, such as permission issues
+            System.out.println("Error: Unable to save the file due to: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Tests different file handling scenarios.
+     */
+    public static void main(String[] args) {
+        // Test case 1: Successful file save
+        System.out.println("Test Case 1: Successful File Save");
+        saveConfigurationToFile("Sample configuration data.", "config.txt");
+
+        // Test case 2: File open error - Simulate by setting read-only permissions
+        System.out.println("\nTest Case 2: File Open Error (Read-only permissions)");
+        try {
+            Path readOnlyFile = Path.of("readonly-config.txt");
+            Files.writeString(readOnlyFile, "Initial data");  // Create the file with initial data
+            readOnlyFile.toFile().setReadOnly();  // Set file to read-only mode
+            saveConfigurationToFile("New configuration data.", readOnlyFile.toString());
+            // Reset permissions after test (cleanup)
+            readOnlyFile.toFile().setWritable(true);
+        } catch (IOException e) {
+            System.out.println("Setup failed for Test Case 2: " + e.getMessage());
+    }
+}
