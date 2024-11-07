@@ -1,0 +1,35 @@
+from netmiko import ConnectHandler
+
+# Define the device details
+cisco_router = {
+    'device_type': 'cisco_ios',
+    'host': '192.168.1.1',
+    'username': 'admin',
+    'password': 'admin',
+    'port': 22,
+}
+
+# Establish the connection
+connection = ConnectHandler(**cisco_router)
+
+# Commands for Router Configuration
+connection.send_command('hostname Router1')
+connection.send_command('interface GigabitEthernet0/1')
+connection.send_command('ip address 192.168.1.1 255.255.255.0')
+connection.send_command('no shutdown')
+
+# Commands for Switch Configuration
+connection.send_command('vlan 10')
+connection.send_command('name SALES')
+connection.send_command('interface FastEthernet0/1')
+connection.send_command('switchport mode access')
+connection.send_command('switchport access vlan 10')
+
+# Verification commands
+output = connection.send_command('show ip interface brief')
+print(output)
+output = connection.send_command('show ip route')
+print(output)
+
+# Close the connection
+connection.disconnect()
